@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -139,10 +138,29 @@ class _BookDetailsScreenState extends State<BookDetailsScreen>
                             color: Colors.black54),
                       ),
                       SizedBox(
+                        height: 15,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Color(widget.book.secondaryColor)),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(widget.book.primaryColor),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        child: Text(widget.book.genre,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Color(widget.book.secondaryColor),
+                            )),
+                      ),
+                      SizedBox(
                         height: 10,
                       ),
                       Text(
-                        "  " + widget.book.desc,
+                        " " + widget.book.desc,
                         style: TextStyle(fontSize: 18, color: Colors.black87),
                       ),
                     ],
@@ -194,7 +212,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen>
     _animationController.forward(from: 0);
   }
 
-   pickImageFromUser() async {
+  pickImageFromUser() async {
     try {
       var image = await ImagePicker()
           .pickImage(source: ImageSource.gallery, imageQuality: 70);
@@ -216,4 +234,3 @@ class _BookDetailsScreenState extends State<BookDetailsScreen>
     }
   }
 }
-
