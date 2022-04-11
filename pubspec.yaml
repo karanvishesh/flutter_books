@@ -42,6 +42,7 @@ dependencies:
   carousel_pro:
   image_picker: ^0.8.4+5
   firebase_storage: ^10.2.6
+  animated_splash_screen: ^1.2.0
 
 dev_dependencies:
   flutter_test:

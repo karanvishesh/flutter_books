@@ -25,6 +25,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen>
   final imageStore = FirebaseStorage.instance.ref().child("Books");
   File? pickedimage;
   bool isPickingImage = false;
+  int imageIndex = 0;
   Animation<Matrix4>? _animation;
   @override
   void initState() {
@@ -71,50 +72,96 @@ class _BookDetailsScreenState extends State<BookDetailsScreen>
                                 width: 1),
                             color: Color(widget.book.primaryColor),
                             borderRadius: BorderRadius.circular(20)),
-                        child: Hero(
-                          tag: widget.book.title,
-                          child: InteractiveViewer(
-                            onInteractionEnd: (details) {
-                              resetAnimation();
-                            },
-                            minScale: 0.5,
-                            transformationController: _transformationController,
-                            maxScale: 2,
-                            clipBehavior: Clip.none,
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Carousel(
-                                  autoplay: false,
-                                  dotBgColor: Colors.transparent,
-                                  images: widget.book.images.map((image) {
-                                    return Builder(
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          height: 500,
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            image: DecorationImage(
-                                              image: NetworkImage(image),
-                                              fit: BoxFit.cover,
-                                              colorFilter: ColorFilter.mode(
-                                                  Colors.black.withOpacity(0.7),
-                                                  BlendMode.softLight),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }).toList(),
+                        child: Column(
+                          children: [
+                            Stack(
+                              children: [
+                                Hero(
+                                  tag: widget.book.title,
+                                  child: InteractiveViewer(
+                                    onInteractionEnd: (details) {
+                                      resetAnimation();
+                                    },
+                                    minScale: 0.5,
+                                    transformationController:
+                                        _transformationController,
+                                    maxScale: 2,
+                                    clipBehavior: Clip.none,
+                                    child: AspectRatio(
+                                      aspectRatio: 1,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Carousel(
+                                          onImageChange: (p0, p1) {
+                                            imageIndex = p1;
+                                            print(imageIndex);
+                                          },
+                                          autoplay: false,
+                                          dotBgColor: Colors.transparent,
+                                          images:
+                                              widget.book.images.map((image) {
+                                            return Builder(
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 5),
+                                                  height: 500,
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    image: DecorationImage(
+                                                      image:
+                                                          NetworkImage(image),
+                                                      fit: BoxFit.cover,
+                                                      colorFilter:
+                                                          ColorFilter.mode(
+                                                              Colors.black
+                                                                  .withOpacity(
+                                                                      0.7),
+                                                              BlendMode
+                                                                  .softLight),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                IconButton(
+                                    onPressed: () {
+                                      FirebaseFirestore.instance
+                                          .collection("books")
+                                          .doc(widget.book.id)
+                                          .update({
+                                        "images": FieldValue.arrayRemove(
+                                            [widget.book.images[imageIndex]])
+                                      });
+                                      setState(() {
+                                        isPickingImage = true;
+                                      });
+                                      pickImageFromUser().then((image) {
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomeScreen()),
+                                                (Route<dynamic> route) =>
+                                                    false);
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                    )),
+                              ],
                             ),
-                          ),
+                          ],
                         ),
                       ),
                       SizedBox(

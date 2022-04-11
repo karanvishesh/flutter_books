@@ -1,3 +1,4 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_books/view/HomeScreen/homescreen.dart';
@@ -28,17 +29,25 @@ class MyApp extends StatelessWidget {
           ),
         ),
         home: FutureBuilder(
-          future: getFlag(),
-          builder: (context, snapshot) {
-          if(snapshot.data == false){
-             setFlag();
-            return SplashScreen();
-          }
-          else{
-            return HomeScreen();
-          }
-          }
-        ));
+            future: getFlag(),
+            builder: (context, snapshot) {
+              if (snapshot.data == false) {
+                setFlag();
+                return AnimatedSplashScreen(
+                    splash: 'assets/splash_image.png',
+                  splashIconSize: MediaQuery.of(context).size.height,
+                  nextScreen: HomeScreen(),
+                  splashTransition: SplashTransition.fadeTransition,
+                );
+              } else {
+                return AnimatedSplashScreen(
+                  splash: 'assets/splash_image.png',
+                  splashIconSize: MediaQuery.of(context).size.height,
+                  nextScreen: HomeScreen(),
+                  splashTransition: SplashTransition.fadeTransition,
+                );
+              }
+            }));
   }
 }
 
